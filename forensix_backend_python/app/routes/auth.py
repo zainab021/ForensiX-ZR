@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -42,6 +43,10 @@ def register_user(request: Request, payload: UserCreate, db: Session = Depends(g
         raise HTTPException(status_code=400, detail="Officer/admin code is required")
     if payload.role in ["admin", "officer"] and payload.officer_code not in _VALID_CODES:
         raise HTTPException(status_code=400, detail="Invalid officer/admin code. Contact your administrator.")
+    if payload.officer_code:
+        code_taken = db.query(User).filter(User.officer_code == payload.officer_code).first()
+        if code_taken:
+            raise HTTPException(status_code=400, detail="This officer/admin code is already registered to another account.")
     user = User(
         full_name=payload.full_name,
         username=payload.username,
@@ -51,7 +56,11 @@ def register_user(request: Request, payload: UserCreate, db: Session = Depends(g
         officer_code=payload.officer_code,
     )
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Username, email, or officer code is already in use.")
     db.refresh(user)
     log_action(db, user.id, "REGISTER_USER", f"New {user.role} registered")
     return user

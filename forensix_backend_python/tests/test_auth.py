@@ -37,6 +37,29 @@ def test_register_officer_missing_code(client):
     assert "required" in resp.json()["detail"]
 
 
+def test_register_duplicate_officer_code_rejected_cleanly(client):
+    first = client.post("/api/auth/register", json={
+        "full_name": "First Officer",
+        "username": "first_officer_dup_code",
+        "email": "first_officer_dup_code@example.com",
+        "password": "firstpass123",
+        "role": "officer",
+        "officer_code": "ZR-OFC-102",
+    })
+    assert first.status_code == 200, first.text
+
+    second = client.post("/api/auth/register", json={
+        "full_name": "Second Officer",
+        "username": "second_officer_dup_code",
+        "email": "second_officer_dup_code@example.com",
+        "password": "secondpass123",
+        "role": "officer",
+        "officer_code": "ZR-OFC-102",
+    })
+    assert second.status_code == 400
+    assert "already" in second.json()["detail"].lower()
+
+
 def test_register_duplicate_username_rejected(client):
     payload = {
         "full_name": "Dup User",
