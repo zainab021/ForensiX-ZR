@@ -41,7 +41,8 @@ def _seed():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    _seed()
+    if os.getenv("SEED_DEMO_USERS", "true").lower() == "true":
+        _seed()
     yield
 
 app = FastAPI(
@@ -64,14 +65,15 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityHeadersMiddleware)
 
+allowed_hosts = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "*").split(",") if h.strip()]
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+
+cors_origins = [o.strip() for o in os.getenv(
+    "CORS_ORIGINS", "http://127.0.0.1:5500,http://localhost:5500"
+).split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://zainab:5500",
-        "http://zainab:8000",
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
