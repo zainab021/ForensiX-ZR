@@ -13,7 +13,7 @@ from slowapi.errors import RateLimitExceeded
 from app.database.db import Base, engine, SessionLocal
 from app.models.models import User
 from app.utils.security import hash_password
-from app.routes import auth, users, reports, cases, evidence, notifications, dashboard, ai
+from app.routes import auth, users, reports, cases, evidence, notifications, dashboard, ai, ws
 import os
 
 limiter = Limiter(key_func=get_remote_address)
@@ -87,6 +87,7 @@ app.include_router(evidence.router)
 app.include_router(notifications.router)
 app.include_router(dashboard.router)
 app.include_router(ai.router)
+app.include_router(ws.router)
 
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

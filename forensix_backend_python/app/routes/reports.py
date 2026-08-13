@@ -7,25 +7,30 @@ from app.models.models import Report, User, Notification
 from app.schemas.schemas import ReportCreate, ReportUpdate, ReportOut
 from app.utils.dependencies import get_current_user, require_roles
 from app.utils.logger import log_action
+from app.utils.ws_manager import manager
+from app.schemas.schemas import NotificationOut
 
 router = APIRouter(prefix="/api/reports", tags=["Reports"])
 limiter = Limiter(key_func=get_remote_address)
 
 @router.post("/", response_model=ReportOut)
 @limiter.limit("10/minute")
-def create_report(request: Request, payload: ReportCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+async def create_report(request: Request, payload: ReportCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     report = Report(**payload.model_dump(), created_by=current_user.id)
     db.add(report)
     db.commit()
     db.refresh(report)
     log_action(db, current_user.id, "CREATE_REPORT", report.title)
     if payload.category == "Emergency SOS" and payload.priority == "urgent":
-        db.add(Notification(
+        note = Notification(
             title=f"🚨 EMERGENCY SOS — Report #{report.id}",
             message=f"{current_user.full_name} (Citizen #{current_user.id}) sent an emergency SOS alert. Immediate response required.",
             target_role="officer"
-        ))
+        )
+        db.add(note)
         db.commit()
+        db.refresh(note)
+        await manager.broadcast("officer", NotificationOut.model_validate(note).model_dump(mode="json"))
     return report
 
 @router.get("/", response_model=list[ReportOut])
