@@ -52,6 +52,7 @@ class ReportCreate(BaseModel):
     category: str    = Field(..., max_length=80)
     description: str = Field(..., max_length=5000)
     location: Optional[str] = Field(None, max_length=180)
+    reporter_name: Optional[str] = Field(None, max_length=120)
     priority: Literal["normal", "high", "urgent"] = "normal"
 
 class ReportUpdate(BaseModel):
@@ -64,6 +65,7 @@ class ReportOut(BaseModel):
     category: str
     description: str
     location: Optional[str]
+    reporter_name: Optional[str]
     status: str
     priority: str
     created_by: Optional[int]
@@ -162,3 +164,17 @@ class ResetPasswordRequest(BaseModel):
         if len(v) < 6:
             raise ValueError("Password must be at least 6 characters")
         return v
+
+class AIClassifyRequest(BaseModel):
+    description: str = Field(..., min_length=1, max_length=5000)
+
+class AIClassifyOut(BaseModel):
+    category: str
+    priority: str
+    confidence: float
+
+class AIAssistantRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=1000)
+
+class AIAssistantOut(BaseModel):
+    reply: str

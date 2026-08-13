@@ -1569,9 +1569,63 @@ async function loadAnalyticsCharts() {
   } catch (err) { /* silent */ }
 }
 
+async function loadAIInsights() {
+  const token = localStorage.getItem("token");
+  const hotspotsEl = document.getElementById("aiHotspots");
+  const trendsEl = document.getElementById("aiTrends");
+  try {
+    const response = await fetch(API_BASE + "/api/ai/insights", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!checkAuth(response) || !response.ok) return;
+    const data = await response.json();
+
+    if (hotspotsEl) {
+      if (data.hotspots && data.hotspots.length) {
+        hotspotsEl.innerHTML = data.hotspots.map(h => `
+          <div class="list-item">
+            <div class="item-title">${esc(h.location)}</div>
+            <div class="item-meta">${h.count} report(s)</div>
+          </div>
+        `).join("");
+      } else {
+        hotspotsEl.innerHTML = '<p class="page-subtitle">No location data yet.</p>';
+      }
+    }
+
+    if (trendsEl) {
+      if (data.category_trends && data.category_trends.length) {
+        trendsEl.innerHTML = data.category_trends.map(t => {
+          const up = t.change_pct >= 0;
+          const icon = up ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+          const color = up ? '#16a34a' : '#dc2626';
+          return `
+            <div class="list-item">
+              <div>
+                <div class="item-title">${esc(t.category)}</div>
+                <div class="item-meta">${t.current_count} this week (was ${t.previous_count})</div>
+              </div>
+              <div style="color:${color}"><i class="fa-solid ${icon}"></i> ${Math.abs(t.change_pct)}%</div>
+            </div>
+          `;
+        }).join("");
+      } else {
+        trendsEl.innerHTML = '<p class="page-subtitle">No trend data yet.</p>';
+      }
+    }
+
+    if (data.priority_breakdown && data.priority_breakdown.length) {
+      chart('priorityChart', 'doughnut',
+        data.priority_breakdown.map(p => p.priority),
+        data.priority_breakdown.map(p => p.count));
+    }
+  } catch (err) { /* silent */ }
+}
+
 if (window.location.pathname.includes("analytics.html")) {
   loadAnalyticsStats();
   loadAnalyticsCharts();
+  loadAIInsights();
 }
 
 function showCitizenSignup() {
@@ -1665,6 +1719,59 @@ window.previewFiles = previewFiles;
 window.handleFileDrop = handleFileDrop;
 
 // =========================
+// AI REPORT SUGGESTION
+// =========================
+
+async function suggestWithAI() {
+  const description = document.getElementById("reportDescription").value.trim();
+  const suggestionEl = document.getElementById("aiSuggestion");
+  const token = localStorage.getItem("token");
+
+  if (!description) {
+    if (suggestionEl) suggestionEl.textContent = "Write a description first.";
+    return;
+  }
+
+  if (suggestionEl) suggestionEl.textContent = "Analyzing...";
+
+  try {
+    const response = await fetch(API_BASE + "/api/ai/classify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ description: description })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      if (suggestionEl) suggestionEl.textContent = "AI suggestion unavailable.";
+      return;
+    }
+
+    const categorySelect = document.getElementById("reportCategory");
+    for (const option of categorySelect.options) {
+      if (option.value === data.category) {
+        categorySelect.value = data.category;
+        break;
+      }
+    }
+
+    const priorityEl = document.getElementById("aiSuggestedPriority");
+    if (priorityEl) priorityEl.value = data.priority;
+
+    if (suggestionEl) {
+      suggestionEl.textContent = "AI suggests: " + data.category + " (" + data.priority + " priority)";
+    }
+  } catch (err) {
+    if (suggestionEl) suggestionEl.textContent = "AI suggestion unavailable.";
+  }
+}
+
+window.suggestWithAI = suggestWithAI;
+
+// =========================
 // CITIZEN SUBMIT REPORT
 // =========================
 
@@ -1674,6 +1781,10 @@ async function submitReport(event) {
   const category = document.getElementById("reportCategory").value;
   const location = document.getElementById("reportLocation").value.trim();
   const description = document.getElementById("reportDescription").value.trim();
+  const reporterNameEl = document.getElementById("reporterName");
+  const reporterName = reporterNameEl ? reporterNameEl.value.trim() : "";
+  const priorityEl = document.getElementById("aiSuggestedPriority");
+  const priority = (priorityEl && priorityEl.value) || "normal";
   const errorEl = document.getElementById("reportError");
   const token = localStorage.getItem("token");
 
@@ -1693,7 +1804,8 @@ async function submitReport(event) {
         category: category,
         description: description,
         location: location,
-        priority: "normal"
+        reporter_name: reporterName || null,
+        priority: priority
       })
     });
 
