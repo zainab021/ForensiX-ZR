@@ -16,7 +16,7 @@ class User(Base):
     role = Column(String(30), nullable=False, default="citizen")  # admin/officer/citizen
     officer_code = Column(String(80), unique=True, nullable=True)
     status = Column(String(30), default="active")
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
 
 class Report(Base):
     __tablename__ = "reports"
@@ -28,7 +28,7 @@ class Report(Base):
     status = Column(String(40), default="pending")
     priority = Column(String(40), default="normal")
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
 
 class Case(Base):
     __tablename__ = "cases"
@@ -40,7 +40,7 @@ class Case(Base):
     description = Column(Text, nullable=True)
     status = Column(String(40), default="open")
     assigned_officer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
 
 class Evidence(Base):
     __tablename__ = "evidence"
@@ -53,7 +53,7 @@ class Evidence(Base):
     collected_by = Column(String(120), nullable=True)
     file_path = Column(String(300), nullable=True)
     status = Column(String(40), default="stored")
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
 
 class Notification(Base):
     __tablename__ = "notifications"
@@ -61,7 +61,7 @@ class Notification(Base):
     title = Column(String(160), nullable=False)
     message = Column(Text, nullable=False)
     target_role = Column(String(40), default="all")
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
 
 class ActivityLog(Base):
     __tablename__ = "activity_logs"
@@ -69,4 +69,4 @@ class ActivityLog(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     action = Column(String(180), nullable=False)
     details = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=_now)
+    created_at = Column(DateTime(timezone=True), default=_now)
