@@ -16,7 +16,8 @@ import os as _os
 _VALID_CODES = set(c.strip() for c in _os.getenv("VALID_OFFICER_CODES", "ZR-ADMIN-001,ZR-OFC-101").split(",") if c.strip())
 
 @router.post("/register", response_model=UserOut)
-def register_user(payload: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def register_user(request: Request, payload: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter((User.username == payload.username) | (User.email == payload.email)).first()
     if existing:
         raise HTTPException(status_code=400, detail="Username or email already exists")
