@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-subtitle">
+              System alerts, officer updates and command announcements.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="card" style="margin-bottom: 18px">
+          <div class="section-head">
+            <h2 class="section-title">Create Notification</h2>
+          </div>
+          <form id="createNotifForm" style="display:flex;flex-direction:column;gap:10px;max-width:520px">
+            <input class="search-box" id="notifTitle" placeholder="Title" required style="width:100%" />
+            <textarea id="notifMessage" placeholder="Message" required
+              style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:0.9rem;resize:vertical;min-height:70px"></textarea>
+            <select id="notifTargetRole" class="filter-select" style="width:auto">
+              <option value="all">All</option>
+              <option value="citizen">Citizen</option>
+              <option value="officer">Officer</option>
+            </select>
+            <div>
+              <button type="submit" class="btn btn-primary btn-sm">Send Notification</button>
+            </div>
+          </form>
+        </section>
+        <section class="card">
+          <div class="section-head">
+            <h2 class="section-title">All Notifications</h2>
+          </div>
+          <div class="list" id="notificationsTableBody"></div>
+        </section>
+      </main>
+    </div>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

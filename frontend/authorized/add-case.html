@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Case | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Add Case</h1>
+            <p class="page-subtitle">
+              Create a new investigation record with assigned unit and priority.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="card">
+          <h2 class="section-title">New Case Form</h2>
+           <form class="form-grid" onsubmit="createCase(event)">
+
+  <div class="form-group">
+    <label>Case Title</label>
+
+    <input
+      class="form-control"
+      id="caseTitle"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Crime Type</label>
+
+    <select
+      class="form-control"
+      id="crimeType"
+    >
+      <option>Theft</option>
+      <option>Fraud</option>
+      <option>Assault</option>
+      <option>Cybercrime</option>
+      <option>Robbery</option>
+      <option>Vandalism</option>
+      <option>Other</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Assigned Officer</label>
+    <select class="form-control" id="caseOfficer">
+      <option value="">— Select Officer —</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Location</label>
+
+    <input
+      class="form-control"
+      id="caseLocation"
+      required
+    />
+  </div>
+
+  <div class="form-group full">
+    <label>Description</label>
+
+    <textarea
+      class="form-control"
+      id="caseDescription"
+      required
+    ></textarea>
+  </div>
+
+  <button class="btn btn-danger" type="submit">
+    <i class="fa-solid fa-save"></i>
+    Create Case
+  </button>
+
+</form>
+        </section>
+      </main>
+    </div>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

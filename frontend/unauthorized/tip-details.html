@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safety Tips | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="public-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Public Safety</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-house"></i>Dashboard</a
+        ><a class="nav-link" href="report.html"
+          ><i class="fa-solid fa-flag"></i>Report</a
+        ><a class="nav-link" href="find-help.html"
+          ><i class="fa-solid fa-hand-holding-medical"></i>Find Help</a
+        ><a class="nav-link" href="tip-details.html"
+          ><i class="fa-solid fa-lightbulb"></i>Tips</a
+        ><a class="nav-link" href="emergency-sos.html"
+          ><i class="fa-solid fa-triangle-exclamation"></i>SOS</a
+        ><a class="nav-link" href="my-reports.html"
+          ><i class="fa-solid fa-clipboard-list"></i>My Reports</a
+        ><a class="nav-link" href="alerts.html"
+          ><i class="fa-solid fa-bell"></i>Alerts</a
+        ><a class="nav-link" href="community-safety.html"
+          ><i class="fa-solid fa-people-group"></i>Community Safety</a
+        ><a class="nav-link" href="contact-us.html"
+          ><i class="fa-solid fa-envelope"></i>Contact</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">citizen portal</div>
+            <h1 class="page-title">Safety Tips</h1>
+            <p class="page-subtitle">
+              Simple public safety guidance and awareness details.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="grid grid-2" style="margin-bottom:24px;">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Safety Tips</h2>
+            </div>
+            <div class="list">
+              <div class="list-item"><div><div class="item-title">🔐 Never share OTP or PIN</div><div class="item-meta">Banks and police never ask for OTP over call or message</div></div><span class="badge high">Critical</span></div>
+              <div class="list-item"><div><div class="item-title">📞 Save emergency numbers</div><div class="item-meta">Police: 15 • Ambulance: 115 • Rescue: 1122</div></div><span class="badge closed">Important</span></div>
+              <div class="list-item"><div><div class="item-title">📸 Report, do not confront</div><div class="item-meta">Document and report — never face criminals alone</div></div><span class="badge info">Guidance</span></div>
+              <div class="list-item"><div><div class="item-title">🌐 Avoid suspicious links</div><div class="item-meta">Do not click unknown links — could be phishing</div></div><span class="badge high">Digital</span></div>
+              <div class="list-item"><div><div class="item-title">🚶 Travel safely</div><div class="item-meta">Share location with family on night travel</div></div><span class="badge progress">Travel</span></div>
+              <div class="list-item"><div><div class="item-title">🔒 Protect your evidence</div><div class="item-meta">Do not edit or share suspicious messages before reporting</div></div><span class="badge progress">Careful</span></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Submit Anonymous Tip</h2>
+            </div>
+            <p class="page-subtitle" style="margin-bottom:16px;">Have information about a crime? Submit anonymously — your identity stays protected.</p>
+            <form id="tipForm" style="display:flex;flex-direction:column;gap:12px;">
+              <select class="form-control" id="tipCategory">
+                <option value="Theft">Theft</option>
+                <option value="Fraud">Fraud</option>
+                <option value="Drug Activity">Drug Activity</option>
+                <option value="Assault">Assault</option>
+                <option value="Suspicious Activity">Suspicious Activity</option>
+                <option value="Cyber Crime">Cyber Crime</option>
+                <option value="Other">Other</option>
+              </select>
+              <input class="form-control" id="tipLocation" placeholder="Location / Area" />
+              <textarea class="form-control" id="tipDescription" placeholder="Describe what you observed..." rows="4" required></textarea>
+              <div id="tipError" style="color:#f87171;font-size:.85rem;display:none;"></div>
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-lightbulb"></i> Submit Tip</button>
+            </form>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

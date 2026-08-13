@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Reports</h1>
+            <p class="page-subtitle">
+              Review incoming public reports and convert valid reports into
+              official cases.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="grid grid-4">
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Pending</div>
+              <div class="stat-value" id="rptStatPending">—</div>
+              <div class="stat-note">Waiting for review</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-inbox"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Verified</div>
+              <div class="stat-value" id="rptStatVerified">—</div>
+              <div class="stat-note">Ready for case creation</div>
+            </div>
+            <div class="stat-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Resolved</div>
+              <div class="stat-value" id="rptStatResolved">—</div>
+              <div class="stat-note">Closed reports</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-check-double"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Converted</div>
+              <div class="stat-value" id="rptStatConverted">—</div>
+              <div class="stat-note">Turned into cases</div>
+            </div>
+            <div class="stat-icon">
+              <i class="fa-solid fa-folder-plus"></i>
+            </div>
+          </div>
+        </section>
+        <div style="margin-top: 18px">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Incoming Reports</h2>
+              <button class="btn btn-sm btn-soft" onclick="exportReportsCSV()" title="Export CSV"><i class="fa-solid fa-download"></i> Export</button>
+              <div class="toolbar">
+                <input
+                  class="search-box"
+                  data-filter-table="#mainTable"
+                  placeholder="Search records..."
+                /><select class="filter-select">
+                  <option>All Status</option>
+                  <option>Pending</option>
+                  <option>Verified</option>
+                  <option>Resolved</option>
+                  <option>Rejected</option>
+                  <option>Converted</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="mainTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="reportsTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="reportDetailPanel" style="display:none; position:fixed; top:0; right:0; width:380px; height:100vh; background:var(--auth-panel); border-left:1px solid rgba(255,255,255,0.07); padding:28px 24px; overflow-y:auto; z-index:999; box-shadow:-8px 0 32px rgba(0,0,0,0.4);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 class="section-title" style="margin:0;">Report Details</h2>
+        <button class="btn btn-soft btn-sm" onclick="closeReportPanel()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="list" style="margin-bottom:20px;">
+        <div class="list-item"><div><div class="item-title">ID</div><div class="item-meta" id="rpId">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Title</div><div class="item-meta" id="rpTitle">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Category</div><div class="item-meta" id="rpCategory">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Location</div><div class="item-meta" id="rpLocation">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Status</div><div class="item-meta" id="rpStatus">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Priority</div><div class="item-meta" id="rpPriority">—</div></div></div>
+        <div class="list-item"><div><div class="item-title">Created At</div><div class="item-meta" id="rpCreatedAt">—</div></div></div>
+        <div class="list-item" style="align-items:flex-start;"><div><div class="item-title">Description</div><div class="item-meta" id="rpDescription" style="white-space:pre-wrap;">—</div></div></div>
+      </div>
+      <div id="rpLinkedCaseSection" style="display:none; margin-bottom:20px;">
+        <div class="section-title" style="margin-bottom:10px;">Linked Case</div>
+        <div class="list">
+          <div class="list-item">
+            <div><div class="item-title" id="rpLinkedCaseNo">—</div><div class="item-meta">Converted from this report</div></div>
+            <button class="btn btn-sm btn-primary" id="rpOpenCaseBtn" onclick="">Open Case</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-title" style="margin-bottom:10px;">Uploaded Evidence <span id="rpEvidenceCountNote" style="font-weight:400; opacity:0.6; font-size:0.8rem;"></span></div>
+      <div id="rpEvidenceList" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; min-height:36px;">
+        <p class="page-subtitle" style="margin:0;">No files uploaded.</p>
+      </div>
+      <div class="section-title" style="margin-bottom:10px;">Update Status</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+        <button class="btn btn-soft btn-sm" onclick="updateReportStatus('pending')">Pending</button>
+        <button class="btn btn-primary btn-sm" onclick="updateReportStatus('verified')">Verified</button>
+        <button class="btn btn-primary btn-sm" onclick="updateReportStatus('resolved')">Resolved</button>
+        <button class="btn btn-danger btn-sm" onclick="updateReportStatus('rejected')">Rejected</button>
+      </div>
+      <div class="section-title" style="margin-bottom:10px;">Assign Officer</div>
+      <select class="form-control" id="convertOfficerSelect" style="margin-bottom:16px;">
+        <option value="">— Select Officer (optional) —</option>
+      </select>
+      <button class="btn btn-primary" style="width:100%;" onclick="convertReportToCase()">
+        <i class="fa-solid fa-folder-plus"></i> Convert to Case
+      </button>
+    </div>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Public Dashboard | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="public-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Public Safety</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-house"></i>Dashboard</a
+        ><a class="nav-link" href="report.html"
+          ><i class="fa-solid fa-flag"></i>Report</a
+        ><a class="nav-link" href="find-help.html"
+          ><i class="fa-solid fa-hand-holding-medical"></i>Find Help</a
+        ><a class="nav-link" href="tip-details.html"
+          ><i class="fa-solid fa-lightbulb"></i>Tips</a
+        ><a class="nav-link" href="emergency-sos.html"
+          ><i class="fa-solid fa-triangle-exclamation"></i>SOS</a
+        ><a class="nav-link" href="my-reports.html"
+          ><i class="fa-solid fa-clipboard-list"></i>My Reports</a
+        ><a class="nav-link" href="alerts.html"
+          ><i class="fa-solid fa-bell"></i>Alerts</a
+        ><a class="nav-link" href="community-safety.html"
+          ><i class="fa-solid fa-people-group"></i>Community Safety</a
+        ><a class="nav-link" href="contact-us.html"
+          ><i class="fa-solid fa-envelope"></i>Contact</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">citizen portal</div>
+            <h1 class="page-title">Public Dashboard</h1>
+            <p class="page-subtitle">
+              Safe public interface for reports, alerts and help resources.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft" onclick="window.location.href='alerts.html'">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft" onclick="window.location.href='alerts.html'">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar" onclick="window.location.href='profile.html'" style="cursor:pointer;">ZR</div>
+          </div>
+        </div>
+        <div class="safe-banner">
+          <div>
+            <h2>Stay aware. Report safely.</h2>
+            <p class="page-subtitle">
+              This side is designed for citizens. Sensitive case details are
+              hidden for privacy.
+            </p>
+          </div>
+          <a class="btn btn-primary" href="report.html"
+            ><i class="fa-solid fa-flag"></i>Report Concern</a
+          >
+        </div>
+        <div style="margin-top: 18px">
+          <section class="grid grid-4">
+            <div class="card stat-card">
+              <div>
+                <div class="stat-label">My Reports</div>
+                <div class="stat-value" id="citizenReportCount">—</div>
+                <div class="stat-note">Track submitted reports</div>
+              </div>
+              <div class="stat-icon">
+                <i class="fa-solid fa-clipboard-list"></i>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div>
+                <div class="stat-label">Safety Alerts</div>
+                <div class="stat-value">8</div>
+                <div class="stat-note">Public warnings</div>
+              </div>
+              <div class="stat-icon"><i class="fa-solid fa-bell"></i></div>
+            </div>
+            <div class="card stat-card">
+              <div>
+                <div class="stat-label">Help Centers</div>
+                <div class="stat-value">12</div>
+                <div class="stat-note">Nearby support</div>
+              </div>
+              <div class="stat-icon">
+                <i class="fa-solid fa-hand-holding-medical"></i>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div>
+                <div class="stat-label">Safety Score</div>
+                <div class="stat-value">Good</div>
+                <div class="stat-note">Community status</div>
+              </div>
+              <div class="stat-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section class="grid grid-2" style="margin-top: 18px">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Latest Public Alerts</h2>
+              <a class="btn btn-sm btn-soft" href="alerts.html">View all</a>
+            </div>
+            <div class="list" id="citizenAlertsList">
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Market road closed</div>
+                  <div class="item-meta">Police checking in progress</div>
+                </div>
+                <span class="badge progress">Traffic</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Cyber fraud warning</div>
+                  <div class="item-meta">Do not share OTP codes</div>
+                </div>
+                <span class="badge high">Warning</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Community meeting</div>
+                  <div class="item-meta">Safety awareness session</div>
+                </div>
+                <span class="badge info">Info</span>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Quick Safety Tips</h2>
+              <a class="btn btn-sm btn-soft" href="tip-details.html">View all</a>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Share live location</div>
+                  <div class="item-meta">When travelling late</div>
+                </div>
+                <span class="badge info">Tip</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Use verified helplines</div>
+                  <div class="item-meta">Avoid fake emergency numbers</div>
+                </div>
+                <span class="badge closed">Safe</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Report suspicious activity</div>
+                  <div class="item-meta">Do not confront directly</div>
+                </div>
+                <span class="badge progress">Report</span>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

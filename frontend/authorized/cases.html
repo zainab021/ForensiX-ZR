@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cases | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Cases</h1>
+            <p class="page-subtitle">
+              Manage official investigation cases with status, priority and
+              assigned officers.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="grid grid-4">
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Open</div>
+              <div class="stat-value" id="caseStatOpen">—</div>
+              <div class="stat-note">Under investigation</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">In Progress</div>
+              <div class="stat-value" id="caseStatProgress">—</div>
+              <div class="stat-note">Assigned teams</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-spinner"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Closed</div>
+              <div class="stat-value" id="caseStatClosed">—</div>
+              <div class="stat-note">Archived cases</div>
+            </div>
+            <div class="stat-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Total Cases</div>
+              <div class="stat-value" id="caseStatTotal">—</div>
+              <div class="stat-note">All records</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-folder"></i></div>
+          </div>
+        </section>
+        <div style="margin-top: 18px">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Case Records</h2>
+              <button class="btn btn-sm btn-soft" onclick="exportCasesCSV()" title="Export CSV"><i class="fa-solid fa-download"></i> Export</button>
+              <div class="toolbar">
+                <input
+                  class="search-box"
+                  data-filter-table="#mainTable"
+                  placeholder="Search records..."
+                /><select class="filter-select">
+                  <option>All Status</option>
+                  <option>Open</option>
+                  <option>In Progress</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="mainTable">
+                <thead>
+                  <tr>
+                    <th>Case No</th>
+                    <th>Title</th>
+                    <th>Crime Type</th>
+                    <th>Status</th>
+                    <th>Assigned Officer</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="casesTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="deleteCaseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:var(--auth-panel); border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius); padding:32px; width:360px; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+        <h2 class="section-title" style="margin-bottom:4px;">Delete Case</h2>
+        <p class="page-subtitle" style="margin-bottom:20px;">This action cannot be undone.</p>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label>Case Number</label>
+          <input class="form-control" id="deleteCaseNoDisplay" readonly style="opacity:0.6;">
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label>Type case number to confirm</label>
+          <input class="form-control" id="deleteCaseNoConfirm" placeholder="e.g. CASE-RPT-5">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label>Your Password</label>
+          <input class="form-control" type="password" id="deleteCasePassword" placeholder="Enter your password">
+        </div>
+        <p id="deleteModalError" style="color:#ef4444; font-size:0.85rem; margin-bottom:14px; display:none;"></p>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-soft" style="flex:1;" onclick="closeDeleteModal()">Cancel</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="confirmDeleteCase()">Confirm Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>
