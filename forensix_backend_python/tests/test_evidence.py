@@ -46,3 +46,18 @@ def test_citizen_can_upload_evidence_to_own_report(client, citizen_headers):
     resp = client.post(f"/api/evidence/upload/report/{report['id']}", files=files, headers=citizen_headers)
     assert resp.status_code == 200, resp.text
     assert resp.json()["report_id"] == report["id"]
+
+
+def test_upload_rejects_spoofed_content_type(client, citizen_headers):
+    report = client.post("/api/reports/", json={
+        "title": "Spoofed Upload Test",
+        "category": "Lost Property",
+        "description": "Report used to test upload content sniffing.",
+    }, headers=citizen_headers).json()
+
+    # Client claims this is a jpeg with a .jpg filename, but the actual bytes
+    # are plain text — the server must reject based on real content, not the
+    # client-supplied Content-Type header or filename extension.
+    files = {"file": ("totally-a-photo.jpg", b"this is not actually an image", "image/jpeg")}
+    resp = client.post(f"/api/evidence/upload/report/{report['id']}", files=files, headers=citizen_headers)
+    assert resp.status_code == 400

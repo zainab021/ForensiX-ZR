@@ -73,8 +73,40 @@ def delete_evidence(evidence_id: int, db: Session = Depends(get_db), current_use
     return {"message": "Evidence deleted"}
 
 UPLOAD_DIR = "uploads"
-ALLOWED_TYPES = {"image/jpeg", "image/png", "image/jpg", "application/pdf"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+CHUNK_SIZE = 1024 * 1024  # 1 MB
+
+# Maps a magic-byte signature to the real MIME type and file extension. The
+# client-supplied Content-Type header and filename extension are both
+# trivially spoofable, so the actual file bytes are the only thing trusted
+# for determining what a file really is.
+_MAGIC_SIGNATURES = [
+    (b"\xff\xd8\xff", "image/jpeg", ".jpg"),
+    (b"\x89PNG\r\n\x1a\n", "image/png", ".png"),
+    (b"%PDF-", "application/pdf", ".pdf"),
+]
+
+
+def _sniff_file_type(header: bytes):
+    for signature, mime_type, ext in _MAGIC_SIGNATURES:
+        if header.startswith(signature):
+            return mime_type, ext
+    return None, None
+
+
+async def _read_upload_limited(file: UploadFile, max_size: int) -> bytes:
+    chunks = []
+    total = 0
+    while True:
+        chunk = await file.read(CHUNK_SIZE)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > max_size:
+            raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
 
 @router.post("/upload/report/{report_id}", response_model=EvidenceOut)
 @limiter.limit("10/minute")
@@ -90,13 +122,11 @@ async def upload_report_evidence(
         raise HTTPException(status_code=404, detail="Report not found")
     if current_user.role == "citizen" and report.created_by != current_user.id:
         raise HTTPException(status_code=403, detail="Access denied")
-    if file.content_type not in ALLOWED_TYPES:
+    contents = await _read_upload_limited(file, MAX_FILE_SIZE)
+    mime_type, ext = _sniff_file_type(contents[:16])
+    if mime_type is None:
         raise HTTPException(status_code=400, detail="File type not allowed. Use jpg, png, or pdf.")
-    contents = await file.read()
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
     os.makedirs(UPLOAD_DIR, exist_ok=True)
-    ext = os.path.splitext(file.filename)[1].lower()
     unique_name = str(uuid.uuid4()) + ext
     file_path = os.path.join(UPLOAD_DIR, unique_name)
     with open(file_path, "wb") as f:
@@ -105,7 +135,7 @@ async def upload_report_evidence(
         report_id=report_id,
         case_id=None,
         title=file.filename,
-        evidence_type=file.content_type,
+        evidence_type=mime_type,
         file_path=file_path,
         collected_by=current_user.full_name,
         status="stored"
