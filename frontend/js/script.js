@@ -2554,8 +2554,61 @@ async function updateNotificationBadge() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('token')) updateNotificationBadge();
+  if (localStorage.getItem('token')) {
+    updateNotificationBadge();
+    connectNotificationSocket();
+  }
 });
+
+// =========================
+// REAL-TIME NOTIFICATIONS (WebSocket)
+// =========================
+
+let _notifSocket = null;
+let _notifReconnectTimer = null;
+
+function connectNotificationSocket() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  const wsUrl = API_BASE.replace(/^http/, 'ws') + '/ws/notifications?token=' + encodeURIComponent(token);
+
+  try {
+    _notifSocket = new WebSocket(wsUrl);
+  } catch (e) {
+    return;
+  }
+
+  _notifSocket.onmessage = (event) => {
+    let note;
+    try {
+      note = JSON.parse(event.data);
+    } catch (e) {
+      return;
+    }
+
+    updateNotificationBadge();
+    if (window.toast) window.toast(note.title || 'New notification');
+
+    if (window.location.pathname.includes('notifications.html')) {
+      const container = document.getElementById('notificationsTableBody');
+      if (container && typeof loadNotifications === 'function') {
+        loadNotifications();
+      }
+    }
+  };
+
+  _notifSocket.onclose = () => {
+    _notifSocket = null;
+    if (!localStorage.getItem('token')) return;
+    clearTimeout(_notifReconnectTimer);
+    _notifReconnectTimer = setTimeout(connectNotificationSocket, 3000);
+  };
+
+  _notifSocket.onerror = () => {
+    if (_notifSocket) _notifSocket.close();
+  };
+}
 
 // =========================
 // CITIZEN REPORT DELETE
