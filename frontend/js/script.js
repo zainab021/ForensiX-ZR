@@ -1,6 +1,6 @@
 (function () {
 
-  const API_BASE = "http://zainab:8000";
+  const API_BASE = window.FORENSIX_API_BASE || "http://127.0.0.1:8000";
 
   // Safe HTML escape — prevents XSS when inserting API data into innerHTML
   function esc(s) {
@@ -515,17 +515,7 @@ async function officerLogin(event) {
 
   event.target.classList.add("active");
 
-  if (role === "admin") {
-
-    username.value = "admin";
-    password.value = "admin123";
-
-  } else {
-
-    username.value = "public";
-    password.value = "user123";
-
-  }
+  // Demo credential autofill removed — accounts must be entered manually.
 
 }
 
