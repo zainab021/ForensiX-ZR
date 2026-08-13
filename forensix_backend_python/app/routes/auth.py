@@ -115,12 +115,16 @@ def reset_password(request: Request, payload: ResetPasswordRequest, db: Session 
         .order_by(PasswordReset.created_at.desc())
         .first()
     )
+    if not reset:
+        raise HTTPException(status_code=400, detail="Invalid username or reset code")
+
     now = datetime.now(timezone.utc)
-    if (
-        not reset
-        or not verify_otp(payload.otp, reset.otp_hash)
-        or reset.expires_at < now
-    ):
+    expires_at = reset.expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        # SQLite doesn't reliably round-trip tzinfo on DateTime(timezone=True)
+        # columns; the value we stored was always UTC, so treat it as such.
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not verify_otp(payload.otp, reset.otp_hash) or expires_at < now:
         raise HTTPException(status_code=400, detail="Invalid username or reset code")
 
     reset.used = True

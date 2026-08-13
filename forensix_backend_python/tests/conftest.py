@@ -15,8 +15,21 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.database.db import engine, Base
+from app.routes import auth as auth_routes
+from app.routes import evidence as evidence_routes
+from app.routes import reports as reports_routes
 
 TEST_DB_FILE = "./test_forensix.db"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _disable_rate_limits():
+    # The test suite registers/logs in far more often than the production
+    # rate limits allow (e.g. 5/minute on register). Disable limiting for
+    # the whole session so functional tests aren't flaky based on how many
+    # other tests ran first; rate-limit behavior itself is verified manually.
+    for module in (auth_routes, reports_routes, evidence_routes):
+        module.limiter.enabled = False
 
 
 @pytest.fixture(scope="session", autouse=True)
