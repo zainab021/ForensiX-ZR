@@ -181,10 +181,5 @@ Zainab
 BS Artificial Intelligence Student
 University of Management and Technology
 
-# 👩‍💻 Team
-**ForensiX ZR Unit Development Team**
-- Zainab
-- Raiha
-
 ## License
 This project is developed for educational and portfolio purposes.
