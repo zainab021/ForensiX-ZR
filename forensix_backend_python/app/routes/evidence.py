@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
 from typing import Optional
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 import shutil, os, uuid
 from app.database.db import get_db
 from app.models.models import Evidence, Case, User, Report
@@ -10,6 +12,7 @@ from app.utils.dependencies import require_roles, get_current_user
 from app.utils.logger import log_action
 
 router = APIRouter(prefix="/api/evidence", tags=["Evidence"])
+limiter = Limiter(key_func=get_remote_address)
 
 @router.post("/", response_model=EvidenceOut)
 def create_evidence(payload: EvidenceCreate, db: Session = Depends(get_db), current_user: User = Depends(require_roles("admin", "officer"))):
@@ -74,7 +77,9 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/jpg", "application/pdf"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 @router.post("/upload/report/{report_id}", response_model=EvidenceOut)
+@limiter.limit("10/minute")
 async def upload_report_evidence(
+    request: Request,
     report_id: int,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
