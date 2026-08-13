@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from app.database.db import get_db
 from app.models.models import Report, User, Notification
 from app.schemas.schemas import ReportCreate, ReportUpdate, ReportOut
@@ -7,9 +9,11 @@ from app.utils.dependencies import get_current_user, require_roles
 from app.utils.logger import log_action
 
 router = APIRouter(prefix="/api/reports", tags=["Reports"])
+limiter = Limiter(key_func=get_remote_address)
 
 @router.post("/", response_model=ReportOut)
-def create_report(payload: ReportCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+@limiter.limit("10/minute")
+def create_report(request: Request, payload: ReportCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     report = Report(**payload.model_dump(), created_by=current_user.id)
     db.add(report)
     db.commit()
