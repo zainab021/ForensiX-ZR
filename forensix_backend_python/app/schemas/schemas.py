@@ -147,3 +147,18 @@ class PasswordChange(BaseModel):
 
 class RoleUpdate(BaseModel):
     role: Literal["citizen", "officer", "admin"]
+
+class ForgotPasswordRequest(BaseModel):
+    username: str = Field(..., max_length=80)
+
+class ResetPasswordRequest(BaseModel):
+    username: str = Field(..., max_length=80)
+    otp: str = Field(..., min_length=6, max_length=6)
+    new_password: str = Field(..., max_length=128)
+
+    @field_validator("new_password")
+    @classmethod
+    def password_strength(cls, v):
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters")
+        return v

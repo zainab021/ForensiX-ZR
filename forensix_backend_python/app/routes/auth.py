@@ -1,11 +1,28 @@
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from app.database.db import get_db
-from app.models.models import User
-from app.schemas.schemas import UserCreate, LoginRequest, TokenOut, UserOut
-from app.utils.security import hash_password, verify_password, create_access_token
+from app.models.models import PasswordReset, User
+from app.schemas.schemas import (
+    ForgotPasswordRequest,
+    LoginRequest,
+    ResetPasswordRequest,
+    TokenOut,
+    UserCreate,
+    UserOut,
+)
+from app.utils.email import send_otp_email
+from app.utils.security import (
+    create_access_token,
+    generate_otp,
+    hash_otp,
+    hash_password,
+    verify_otp,
+    verify_password,
+)
 from app.utils.dependencies import get_current_user, require_roles
 from app.utils.logger import log_action
 
@@ -56,17 +73,57 @@ def login(request: Request, payload: LoginRequest, db: Session = Depends(get_db)
 def me(current_user: User = Depends(get_current_user)):
     return current_user
 
+_GENERIC_FORGOT_PASSWORD_MESSAGE = (
+    "If this username exists and has an email on file, a reset code has been sent."
+)
+OTP_EXPIRE_MINUTES = 10
+
+
 @router.post("/forgot-password")
-def forgot_password(username: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == username).first()
+@limiter.limit("3/hour")
+def forgot_password(request: Request, payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == payload.username).first()
+    if user and user.email:
+        db.query(PasswordReset).filter(
+            PasswordReset.user_id == user.id, PasswordReset.used == False  # noqa: E712
+        ).update({"used": True})
+        otp = generate_otp()
+        db.add(PasswordReset(
+            user_id=user.id,
+            otp_hash=hash_otp(otp),
+            expires_at=datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRE_MINUTES),
+        ))
+        db.commit()
+        send_otp_email(user.email, otp)
+        log_action(db, user.id, "FORGOT_PASSWORD", f"{payload.username} requested a reset code")
+    # Always return the same message whether or not the user/email exists,
+    # so this endpoint can't be used to enumerate valid usernames.
+    return {"message": _GENERIC_FORGOT_PASSWORD_MESSAGE}
+
+
+@router.post("/reset-password")
+@limiter.limit("10/minute")
+def reset_password(request: Request, payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == payload.username).first()
     if not user:
-        return {"message": "If this username exists, a reset request has been sent."}
-    from app.models.models import Notification
-    db.add(Notification(
-        title=f"🔑 Password Reset Request",
-        message=f"User '{username}' (ID #{user.id}) has requested a password reset. Please reset via Admin → Users → Profile.",
-        target_role="admin"
-    ))
+        raise HTTPException(status_code=400, detail="Invalid username or reset code")
+
+    reset = (
+        db.query(PasswordReset)
+        .filter(PasswordReset.user_id == user.id, PasswordReset.used == False)  # noqa: E712
+        .order_by(PasswordReset.created_at.desc())
+        .first()
+    )
+    now = datetime.now(timezone.utc)
+    if (
+        not reset
+        or not verify_otp(payload.otp, reset.otp_hash)
+        or reset.expires_at < now
+    ):
+        raise HTTPException(status_code=400, detail="Invalid username or reset code")
+
+    reset.used = True
+    user.password_hash = hash_password(payload.new_password)
     db.commit()
-    log_action(db, user.id, "FORGOT_PASSWORD", f"{username} requested reset")
-    return {"message": "Reset request sent to administrator. You will be contacted shortly."}
+    log_action(db, user.id, "RESET_PASSWORD", f"{payload.username} reset their password via OTP")
+    return {"message": "Password reset successfully. You can now log in."}

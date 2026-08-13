@@ -144,8 +144,17 @@ Copy `forensix_backend_python/.env.example` to `forensix_backend_python/.env` an
 | `CORS_ORIGINS` | Comma-separated allowed frontend origins | Your real frontend domain(s), no trailing slash |
 | `ALLOWED_HOSTS` | Comma-separated allowed `Host` header values | Your real backend domain(s), not `*` |
 | `SEED_DEMO_USERS` | Auto-create demo admin/officer/citizen accounts on startup | `false` |
+| `SMTP_HOST` / `SMTP_PORT` | SMTP server for password-reset OTP emails | `smtp.gmail.com` / `587` (Gmail) |
+| `SMTP_USER` / `SMTP_PASSWORD` | Gmail address and App Password used to send OTP emails | Generate an App Password at `myaccount.google.com/apppasswords` (requires 2-Step Verification) — do not use your normal Gmail password |
+| `SMTP_FROM_NAME` | Display name on outgoing OTP emails | e.g. `ForensiX ZR Unit` |
 
 The frontend's backend URL is set separately in `frontend/js/config.js` (`window.FORENSIX_API_BASE`) — update it to point at your deployed backend.
+
+## Forgot / Reset Password
+
+`POST /api/auth/forgot-password {username}` generates a 6-digit OTP (10-minute expiry), emails it to the user's registered address via SMTP, and always returns the same generic message — whether or not the username exists — so the endpoint can't be used to enumerate registered usernames. If `SMTP_USER`/`SMTP_PASSWORD` aren't configured, the OTP is logged to the server console instead of emailed (useful for local dev).
+
+`POST /api/auth/reset-password {username, otp, new_password}` verifies the OTP and sets the new password. Both endpoints are rate-limited (`3/hour` and `10/minute` respectively) to prevent OTP-spam abuse.
 
 ## Production Checklist
 
@@ -153,6 +162,7 @@ The frontend's backend URL is set separately in `frontend/js/config.js` (`window
 - [ ] Point `DATABASE_URL` at a PostgreSQL instance and run `alembic upgrade head`
 - [ ] Set `SEED_DEMO_USERS=false` (demo accounts use known weak passwords)
 - [ ] Set `CORS_ORIGINS` and `ALLOWED_HOSTS` to your real domain(s)
+- [ ] Configure `SMTP_USER`/`SMTP_PASSWORD` with a real Gmail App Password so password resets actually deliver
 - [ ] Update `frontend/js/config.js` to point at the deployed backend URL
 - [ ] Run the backend test suite (`pytest`) before deploying
 
