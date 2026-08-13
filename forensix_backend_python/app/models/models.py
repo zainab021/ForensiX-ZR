@@ -25,6 +25,7 @@ class Report(Base):
     category = Column(String(80), nullable=False)
     description = Column(Text, nullable=False)
     location = Column(String(180), nullable=True)
+    reporter_name = Column(String(120), nullable=True)
     status = Column(String(40), default="pending")
     priority = Column(String(40), default="normal")
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
