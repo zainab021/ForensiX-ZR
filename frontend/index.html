@@ -86,11 +86,8 @@
          </button>
         <p class="error-msg" id="citizenError"></p>
 
-        <div class="demo-box">
-          <strong>Demo Citizen Account</strong>
-          <p>Username: citizen</p>
-          <p>Password: citizen123</p>
-        </div>
+        <!-- Demo credentials removed. When SEED_DEMO_USERS=true on the backend,
+             the demo citizen account is citizen/citizen123. -->
       </form>
        
       <form id="citizenSignupForm" class="login-form hidden" onsubmit="citizenSignup(event)">
@@ -159,18 +156,15 @@
 
         <p class="error-msg" id="officerError"></p>
 
-        <div class="demo-box">
-          <strong>Demo Officer Login</strong>
-          <p>Code: ZR-OFC-101 &nbsp;|&nbsp; Username: officer &nbsp;|&nbsp; Password: officer123</p>
-          <strong>Demo Admin Login</strong>
-          <p>Code: ZR-ADMIN-001 &nbsp;|&nbsp; Username: admin &nbsp;|&nbsp; Password: admin123</p>
-        </div>
+        <!-- Demo credentials removed. When SEED_DEMO_USERS=true on the backend,
+             demo accounts are officer/officer123 and admin/admin123. -->
       </form>
 
     </div>
 
   </div>
 
+  <script src="js/config.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
