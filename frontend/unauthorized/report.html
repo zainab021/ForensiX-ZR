@@ -95,6 +95,10 @@
               <label>Area / Location</label>
               <input class="form-control" id="reportLocation" required />
             </div>
+            <div class="form-group">
+              <label>Your Name <span style="font-weight:400; opacity:0.6;">(Optional)</span></label>
+              <input class="form-control" id="reporterName" placeholder="Leave blank to report anonymously" />
+            </div>
             <div class="form-group full">
               <label>Description</label>
               <textarea
@@ -103,6 +107,13 @@
                 required
                 placeholder="Write only necessary details"
               ></textarea>
+              <input type="hidden" id="aiSuggestedPriority" value="normal" />
+              <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-soft btn-sm" onclick="suggestWithAI()">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> AI Suggest Category &amp; Priority
+                </button>
+                <span id="aiSuggestion" class="page-subtitle" style="margin:0;"></span>
+              </div>
             </div>
             <div class="form-group full">
               <label>Upload Evidence <span style="font-weight:400; opacity:0.6;">(Optional — JPG, PNG, PDF)</span></label>
@@ -129,5 +140,6 @@
     </div>
     <script src="../js/config.js"></script>
     <script src="../js/script.js"></script>
+    <script src="../js/assistant-widget.js"></script>
   </body>
 </html>
