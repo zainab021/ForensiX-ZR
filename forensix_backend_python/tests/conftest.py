@@ -4,7 +4,7 @@ import sys
 os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production-use-only-in-ci")
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test_forensix.db")
 os.environ.setdefault("SEED_DEMO_USERS", "false")
-os.environ.setdefault("VALID_OFFICER_CODES", "ZR-ADMIN-001,ZR-OFC-101")
+os.environ.setdefault("VALID_OFFICER_CODES", "ZR-ADMIN-001,ZR-OFC-101,ZR-OFC-102")
 os.environ.setdefault("CORS_ORIGINS", "http://127.0.0.1:5500")
 os.environ.setdefault("ALLOWED_HOSTS", "*")
 
