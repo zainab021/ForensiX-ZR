@@ -1,0 +1,537 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ForensiX-ZR — Release Readiness Consolidation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 1.05rem; font-weight: 700; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 0.9rem; font-weight: 700; margin: 14px 0 6px; color: #57606a; text-transform: uppercase; letter-spacing: 0.04em; }
+  p  { margin-bottom: 8px; color: #1f2328; }
+  code { font-family: "Consolas", "Menlo", monospace; font-size: 12px; background: #f7f8fa; padding: 1px 5px; border-radius: 3px; border: 1px solid #e5e7eb; }
+
+  .meta { font-size: 12px; color: #57606a; margin-bottom: 20px; }
+  .meta span { margin-right: 20px; }
+
+  /* Overall status banner */
+  .status-banner {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0 24px;
+    border-left: 5px solid;
+  }
+  .status-not-ready { background: #fff5f5; border-color: #e53e3e; }
+  .status-not-ready .status-label { color: #c53030; font-size: 1.2rem; font-weight: 800; }
+  .status-note { font-size: 13px; color: #57606a; margin-top: 6px; }
+
+  /* Summary grid */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+  .stat-card {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-number { font-size: 1.6rem; font-weight: 800; }
+  .stat-label  { font-size: 11px; color: #57606a; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+  .red   { color: #e53e3e; }
+  .amber { color: #d97706; }
+  .green { color: #16a34a; }
+  .blue  { color: #3b82d4; }
+  .gray  { color: #57606a; }
+
+  /* Finding rows */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+  th { background: #f7f8fa; text-align: left; font-weight: 600; padding: 7px 10px; border-bottom: 2px solid #e5e7eb; font-size: 12px; color: #57606a; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7f8fa; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .badge-critical { background: #fee2e2; color: #991b1b; }
+  .badge-high     { background: #fef3c7; color: #92400e; }
+  .badge-medium   { background: #e0f2fe; color: #075985; }
+  .badge-low      { background: #f0fdf4; color: #166534; }
+  .badge-info     { background: #f1f5f9; color: #475569; }
+  .badge-passed   { background: #dcfce7; color: #15803d; }
+  .badge-warn     { background: #fef9c3; color: #854d0e; }
+  .badge-notver   { background: #f3f4f6; color: #374151; }
+  .badge-confirmed{ background: #fee2e2; color: #991b1b; }
+
+  .domain-tag {
+    font-size: 10px;
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 7px 10px 7px 30px;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+    font-size: 13px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #d1d5db;
+    border-radius: 3px;
+    background: #fff;
+  }
+  .checklist li.done::before {
+    background: #16a34a;
+    border-color: #16a34a;
+    content: '✓';
+    font-size: 10px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding-top: 1px;
+  }
+  .checklist li.blocker::before { border-color: #e53e3e; background: #fee2e2; }
+  .checklist li.warn-item::before { border-color: #d97706; background: #fef3c7; }
+  .checklist-section { margin-bottom: 10px; }
+  .checklist-section h3 { margin-bottom: 4px; }
+
+  /* Remediation blocks */
+  .remediation-block {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .remediation-header {
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7f8fa;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .remediation-body {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .remediation-body code { display: block; margin: 4px 0; white-space: pre-wrap; }
+
+  /* Passed checks list */
+  .passed-list { columns: 2; column-gap: 20px; list-style: none; padding: 0; }
+  .passed-list li { font-size: 12px; padding: 3px 0 3px 16px; position: relative; break-inside: avoid; }
+  .passed-list li::before { content: "✅"; position: absolute; left: 0; font-size: 11px; }
+
+  .section-intro { font-size: 13px; color: #57606a; margin-bottom: 10px; }
+
+  footer { text-align: center; font-size: 11px; color: #9ca3af; margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>ForensiX-ZR — Final Release Readiness Consolidation</h1>
+  <div class="meta">
+    <span>IBM Bob 2.0 Hackathon</span>
+    <span>Domains: Security · Configuration · Database · Deployment · Testing · Dependencies</span>
+    <span>Evidence: 6 audit sessions + live pytest + live pip-audit</span>
+  </div>
+
+  
+  <div class="status-banner status-not-ready">
+    <div class="status-label">🔴 NOT READY FOR PRODUCTION RELEASE</div>
+    <div class="status-note">
+      Blocked by: 1 HIGH confirmed deployment finding (no CI/CD), 2 HIGH dependency vulnerabilities
+      (<code>python-jose 3.3.0</code>, <code>python-multipart 0.0.20</code>), and 1 active CVE advisory with no fix yet
+      (<code>PYSEC-2025-185</code> on python-jose). Evidence files are served without authentication (SEC-06).
+      All 35 tests pass. Resolve confirmed HIGH findings before release.
+    </div>
+  </div>
+
+  
+  <div class="summary-grid">
+    <div class="stat-card"><div class="stat-number red">4</div><div class="stat-label">Confirmed Issues</div></div>
+    <div class="stat-card"><div class="stat-number amber">12</div><div class="stat-label">Warnings</div></div>
+    <div class="stat-card"><div class="stat-number blue">8</div><div class="stat-label">Recommendations</div></div>
+    <div class="stat-card"><div class="stat-number green">35</div><div class="stat-label">Tests Passed</div></div>
+    <div class="stat-card"><div class="stat-number green">37</div><div class="stat-label">Checks Passed</div></div>
+    <div class="stat-card"><div class="stat-number gray">4</div><div class="stat-label">Not Verified</div></div>
+  </div>
+
+  
+  <h2>1 — Confirmed Critical / High Issues</h2>
+  <p class="section-intro">These must be resolved before any production release.</p>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Domain</th><th>Severity</th><th>Finding</th><th>File / Evidence</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>DEPLOY-CI</code></td>
+        <td><span class="domain-tag">Deployment</span></td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td>No CI/CD pipeline. No automated gate between commits and deployment. Tests, secrets, and migrations are never validated automatically.</td>
+        <td>No <code>.github/workflows/</code>, <code>.gitlab-ci.yml</code>, or any other CI file found.</td>
+      </tr>
+      <tr>
+        <td><code>DEP-JOSE</code></td>
+        <td><span class="domain-tag">Dependencies</span></td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td><code>python-jose==3.3.0</code> has 3 advisories: PYSEC-2024-232, PYSEC-2024-233 (fix: 3.4.0) and PYSEC-2025-185 (no fix yet). python-jose signs every JWT in the application.</td>
+        <td><code>requirements.txt:5</code> — confirmed by live pip-audit.</td>
+      </tr>
+      <tr>
+        <td><code>DEP-MULTIPART</code></td>
+        <td><span class="domain-tag">Dependencies</span></td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td><code>python-multipart==0.0.20</code> has 6 advisories (PYSEC-2026-1852, -3036, -3037, -3038, -3039, -3040). This package parses all file uploads. Fix: upgrade to <code>0.0.31</code>.</td>
+        <td><code>requirements.txt:8</code> — confirmed by live pip-audit.</td>
+      </tr>
+      <tr>
+        <td><code>SEC-06</code></td>
+        <td><span class="domain-tag">Security</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>Evidence files (crime photos, PDFs) served as a public unauthenticated static directory. Any URL to an uploaded file is world-readable with no token required.</td>
+        <td><code>app/main.py:109</code> — <code>app.mount("/uploads", StaticFiles(...))</code></td>
+      </tr>
+      <tr>
+        <td><code>CONFIG-14</code></td>
+        <td><span class="domain-tag">Configuration</span></td>
+        <td><span class="badge badge-low">LOW</span></td>
+        <td>README line 117 describes <code>SEED_DEMO_USERS=true</code> as "the default for local dev" — the actual code default is <code>"false"</code>. Misleads operators into thinking demo accounts auto-create.</td>
+        <td><code>README.md:117</code> vs <code>app/main.py:60</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>2 — Medium / Low Warnings</h2>
+  <p class="section-intro">Not individually release-blocking, but should be addressed before or shortly after launch.</p>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Domain</th><th>Sev</th><th>Finding</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>SEC-TOKEN-EXPIRE</code></td>
+        <td><span class="domain-tag">Security</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>JWT expiry defaults to 1440 min (24 hours) with no server-side revocation. A stolen token is valid for a full day.</td>
+      </tr>
+      <tr>
+        <td><code>SEC-02</code></td>
+        <td><span class="domain-tag">Security</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>VALID_OFFICER_CODES falls back to publicly-known development codes (<code>ZR-ADMIN-001</code>, etc.) if env var is unset. Warning is logged but not fatal.</td>
+      </tr>
+      <tr>
+        <td><code>CONFIG-03</code></td>
+        <td><span class="domain-tag">Config</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>ALLOWED_HOSTS=*</code> in <code>.env.example</code> and as in-code default. Disables Host header validation, enabling Host header injection.</td>
+      </tr>
+      <tr>
+        <td><code>CONFIG-07</code></td>
+        <td><span class="domain-tag">Config</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>DATABASE_URL</code> silently falls back to SQLite with only a <code>logging.warning()</code>. Production container missing this env var will serve live traffic against a throwaway SQLite file.</td>
+      </tr>
+      <tr>
+        <td><code>CONFIG-10</code></td>
+        <td><span class="domain-tag">Config</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>ACCESS_TOKEN_EXPIRE_MINUTES=1440</code> in both <code>.env.example</code> and in-code default. No guidance on tuning for production in the README checklist.</td>
+      </tr>
+      <tr>
+        <td><code>DB-01</code></td>
+        <td><span class="domain-tag">Database</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>Base.metadata.create_all()</code> in <code>main.py:24</code> runs alongside <code>alembic upgrade head</code> in <code>entrypoint.sh</code>. Dual schema drivers diverge on existing-database upgrades.</td>
+      </tr>
+      <tr>
+        <td><code>DB-02</code></td>
+        <td><span class="domain-tag">Database</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>Same root cause as CONFIG-07: SQLite fallback is silent; <code>SECRET_KEY</code> fails hard but <code>DATABASE_URL</code> does not.</td>
+      </tr>
+      <tr>
+        <td><code>DEPLOY-NOROOT</code></td>
+        <td><span class="domain-tag">Deployment</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>Backend container runs as root (no <code>USER</code> instruction in Dockerfile). CIS Docker Benchmark violation.</td>
+      </tr>
+      <tr>
+        <td><code>DEPLOY-BACKEND-PORT</code></td>
+        <td><span class="domain-tag">Deployment</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td>Port 8000 published directly to host. No TLS-terminating proxy in the Compose stack. Swagger UI (<code>/docs</code>, <code>/redoc</code>) publicly accessible.</td>
+      </tr>
+      <tr>
+        <td><code>DEP-ECDSA</code></td>
+        <td><span class="domain-tag">Dependencies</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>ecdsa==0.19.2</code> (transitive dep of python-jose) — PYSEC-2026-1325, no fix version listed by pip-audit.</td>
+      </tr>
+      <tr>
+        <td><code>SEC-04</code></td>
+        <td><span class="domain-tag">Security</span></td>
+        <td><span class="badge badge-low">LOW</span></td>
+        <td>JWT passed as WebSocket URL query parameter (<code>?token=…</code>) — appears in access logs, browser history, proxy logs.</td>
+      </tr>
+      <tr>
+        <td><code>DEPLOY-PYTEST-IN-PROD</code></td>
+        <td><span class="domain-tag">Deployment</span></td>
+        <td><span class="badge badge-medium">MEDIUM</span></td>
+        <td><code>pytest&gt;=8.0.0</code> included in <code>requirements.txt</code> and therefore installed in the production image.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>3 — Passed Checks</h2>
+  <ul class="passed-list">
+    <li>SECRET_KEY startup guard raises RuntimeError</li>
+    <li>bcrypt used for all password hashing</li>
+    <li>JWT uses HS256 algorithm</li>
+    <li>OTP comparison is timing-safe (hmac.compare_digest)</li>
+    <li>SEED_DEMO_USERS defaults to "false"</li>
+    <li>POSTGRES_PASSWORD uses :? required substitution</li>
+    <li>CORS origins are specific, not wildcarded</li>
+    <li>All 12 required env vars in .env.example</li>
+    <li>Frontend API URL uses dynamic hostname detection</li>
+    <li>File upload validates magic bytes (not Content-Type)</li>
+    <li>File upload enforces 10 MB cap at byte level</li>
+    <li>Uploaded filenames are server-generated UUIDs</li>
+    <li>Username enumeration blocked on forgot-password</li>
+    <li>All auth endpoints are rate-limited (slowapi)</li>
+    <li>Role authorisation reads from DB, not JWT claims</li>
+    <li>Account deactivation enforced on every request</li>
+    <li>No raw SQL — full SQLAlchemy ORM throughout</li>
+    <li>Security headers middleware applied to all responses</li>
+    <li>VALID_OFFICER_CODES emits startup warning on fallback</li>
+    <li>Migration chain is linear, unambiguous (3 revisions)</li>
+    <li>Migrations consistent with ORM models (all tables/columns)</li>
+    <li>alembic/env.py overrides sqlalchemy.url from environment</li>
+    <li>entrypoint.sh: set -e + exit 1 on migration failure</li>
+    <li>Docker Compose waits for PostgreSQL healthcheck</li>
+    <li>PostgreSQL port NOT exposed to host</li>
+    <li>uploads_data and postgres_data are named volumes</li>
+    <li>All 3 services: restart: unless-stopped</li>
+    <li>.dockerignore excludes .env, *.db, tests/, __pycache__</li>
+    <li>Dockerfile: requirements.txt copied before source (layer cache)</li>
+    <li>Dockerfile: pip install --no-cache-dir</li>
+    <li>SMTP degrades gracefully when unconfigured</li>
+    <li>SMTP uses STARTTLS (not plaintext)</li>
+    <li>SQLite timezone-naive quirk handled in reset-password</li>
+    <li>Session lifecycle via Depends(get_db) is consistent</li>
+    <li>pool_pre_ping=True on PostgreSQL engine</li>
+    <li>Test suite uses isolated test_forensix.db (not production)</li>
+    <li><strong>35 / 35 pytest tests PASS</strong> (live run, exit code 0)</li>
+  </ul>
+
+  
+  <h2>4 — Not Verified</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Domain</th><th>Why Not Verified</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>SEC-ENV-01</code></td>
+        <td><span class="domain-tag">Security</span></td>
+        <td>git exited with code 128 (not a git repository in this context) — cannot confirm .env was never committed. .gitignore entry is present and correct. Manual check required: <code>git ls-files forensix_backend_python/.env</code></td>
+      </tr>
+      <tr>
+        <td><code>DB-03</code></td>
+        <td><span class="domain-tag">Database</span></td>
+        <td><code>forensix.db</code> is physically present on disk. Cannot confirm via git whether it was ever committed. <code>.gitignore</code> correctly excludes <code>*.db</code>. Manual check required: <code>git log --all -- forensix_backend_python/forensix.db</code></td>
+      </tr>
+      <tr>
+        <td><code>DEPLOY-TLS</code></td>
+        <td><span class="domain-tag">Deployment</span></td>
+        <td>No TLS configuration found in the repository. May be terminated at an external load balancer, CDN, or proxy not present in this codebase. Requires human verification of actual infrastructure.</td>
+      </tr>
+      <tr>
+        <td><code>DEP-PYSEC-2025-185</code></td>
+        <td><span class="domain-tag">Dependencies</span></td>
+        <td>pip-audit listed no fix version for PYSEC-2025-185 on python-jose. Whether the vulnerability is exploitable via ForensiX's actual JWT usage path requires manual review of the advisory.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>5 — Required Remediation Before Release</h2>
+  <p class="section-intro">In priority order. Items 1–4 are release blockers.</p>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-high">HIGH</span> <span>1. Upgrade python-multipart to ≥ 0.0.31</span> <span class="domain-tag">Dependencies</span></div>
+    <div class="remediation-body">
+      In <code>requirements.txt:8</code>, change:<br />
+      <code>python-multipart==0.0.20</code> → <code>python-multipart&gt;=0.0.31</code><br />
+      Resolves all 6 pip-audit advisories (PYSEC-2026-1852, -3036, -3037, -3038, -3039, -3040). This package parses every file upload.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-high">HIGH</span> <span>2. Upgrade python-jose to 3.4.0</span> <span class="domain-tag">Dependencies</span></div>
+    <div class="remediation-body">
+      In <code>requirements.txt:5</code>, change:<br />
+      <code>python-jose[cryptography]==3.3.0</code> → <code>python-jose[cryptography]==3.4.0</code><br />
+      Resolves PYSEC-2024-232 and PYSEC-2024-233. Monitor PYSEC-2025-185 for a future fix.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-high">HIGH</span> <span>3. Add CI/CD pipeline</span> <span class="domain-tag">Deployment</span></div>
+    <div class="remediation-body">
+      Create <code>.github/workflows/ci.yml</code> that runs <code>pytest</code> and <code>pip-audit</code> on every push. This is the only item blocking the existing release-readiness report from moving from NOT READY to READY WITH WARNINGS.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>4. Replace /uploads static mount with authenticated file-serving endpoint</span> <span class="domain-tag">Security</span></div>
+    <div class="remediation-body">
+      Remove <code>app.mount("/uploads", StaticFiles(...))</code> from <code>app/main.py:109</code>. Replace with an authenticated route that verifies the requesting user owns or has access to the evidence record before streaming the file.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>5. Remove create_all() — rely exclusively on Alembic</span> <span class="domain-tag">Database</span></div>
+    <div class="remediation-body">
+      Remove <code>Base.metadata.create_all(bind=engine)</code> from <code>app/main.py:24</code>. The <code>entrypoint.sh</code> already runs <code>alembic upgrade head</code> as the authoritative schema driver.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>6. Run backend container as non-root user</span> <span class="domain-tag">Deployment</span></div>
+    <div class="remediation-body">
+      Add to <code>Dockerfile</code> before ENTRYPOINT:<br />
+      <code>RUN addgroup --system appgroup &amp;&amp; adduser --system --ingroup appgroup appuser</code><br />
+      <code>RUN chown -R appuser:appgroup /app</code><br />
+      <code>USER appuser</code>
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>7. Verify and purge forensix.db and .env from git history</span> <span class="domain-tag">Database / Security</span></div>
+    <div class="remediation-body">
+      Run: <code>git ls-files forensix_backend_python/.env</code> and <code>git ls-files forensix_backend_python/forensix.db</code><br />
+      If either returns output, remove from tracking and purge history. Both files are correctly in <code>.gitignore</code> — this confirms they were never committed, or repairs it if they were.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-low">LOW</span> <span>8. Fix stale README description of SEED_DEMO_USERS</span> <span class="domain-tag">Configuration</span></div>
+    <div class="remediation-body">
+      Change <code>README.md:117</code> from "the default for local dev" to "must be explicitly set to true for dev" to match the actual <code>app/main.py</code> default of <code>"false"</code>.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>9. Add TLS-terminating proxy and restrict port 8000</span> <span class="domain-tag">Deployment</span></div>
+    <div class="remediation-body">
+      Change <code>docker-compose.yml:28</code> from <code>"8000:8000"</code> to <code>"127.0.0.1:8000:8000"</code> to prevent direct external access. Add an nginx service with SSL and proxy_pass. Disable <code>/docs</code> and <code>/redoc</code> in production via <code>FastAPI(docs_url=None, redoc_url=None)</code>.
+    </div>
+  </div>
+
+  <div class="remediation-block">
+    <div class="remediation-header"><span class="badge badge-medium">MEDIUM</span> <span>10. Separate dev dependencies from production requirements</span> <span class="domain-tag">Deployment</span></div>
+    <div class="remediation-body">
+      Move <code>pytest&gt;=8.0.0</code> (and optionally test-only use of <code>httpx</code>) into a <code>requirements-dev.txt</code>. Update <code>Dockerfile</code> to install only <code>requirements.txt</code>.
+    </div>
+  </div>
+
+  
+  <h2>6 — Final Release Checklist</h2>
+
+  <div class="checklist-section">
+    <h3>🔴 Release Blockers</h3>
+    <ul class="checklist">
+      <li class="blocker">Upgrade <code>python-multipart</code> to ≥ 0.0.31 (DEP-MULTIPART)</li>
+      <li class="blocker">Upgrade <code>python-jose</code> to 3.4.0 (DEP-JOSE)</li>
+      <li class="blocker">Add CI/CD pipeline — pytest + pip-audit on every push (DEPLOY-CI)</li>
+      <li class="blocker">Replace <code>/uploads</code> StaticFiles with authenticated endpoint (SEC-06)</li>
+      <li class="blocker">Verify <code>forensix.db</code> and <code>.env</code> not tracked in git (DB-03 / SEC-ENV-01)</li>
+    </ul>
+  </div>
+
+  <div class="checklist-section">
+    <h3>🟡 Pre-Launch (before go-live)</h3>
+    <ul class="checklist">
+      <li class="warn-item">Remove <code>Base.metadata.create_all()</code> from <code>main.py</code> — Alembic only (DB-01)</li>
+      <li class="warn-item">Set <code>ALLOWED_HOSTS</code> to real domain(s) in production <code>.env</code> (CONFIG-03)</li>
+      <li class="warn-item">Set <code>ACCESS_TOKEN_EXPIRE_MINUTES</code> to 60–240 min in production (CONFIG-10)</li>
+      <li class="warn-item">Confirm <code>DATABASE_URL</code> points to PostgreSQL in production (CONFIG-07 / DB-02)</li>
+      <li class="warn-item">Run backend container as non-root user (DEPLOY-NOROOT)</li>
+      <li class="warn-item">Add TLS reverse proxy; bind port 8000 to localhost only (DEPLOY-BACKEND-PORT)</li>
+      <li class="warn-item">Disable <code>/docs</code> and <code>/redoc</code> in production (DEPLOY-BACKEND-PORT)</li>
+      <li class="warn-item">Separate pytest from production <code>requirements.txt</code> (DEPLOY-PYTEST-IN-PROD)</li>
+      <li class="warn-item">Set <code>VALID_OFFICER_CODES</code> to real internal codes — not the public defaults (SEC-02)</li>
+      <li class="warn-item">Set <code>SEED_DEMO_USERS=false</code> in production <code>.env</code></li>
+      <li class="warn-item">Set a real, randomly generated <code>SECRET_KEY</code> — never reuse the example value</li>
+      <li class="warn-item">Configure <code>CORS_ORIGINS</code> to real frontend domain(s)</li>
+    </ul>
+  </div>
+
+  <div class="checklist-section">
+    <h3>✅ Already Passing</h3>
+    <ul class="checklist">
+      <li class="done">All 35 automated tests pass (live pytest run)</li>
+      <li class="done">SECRET_KEY validated at startup — RuntimeError if unset</li>
+      <li class="done">bcrypt password hashing throughout</li>
+      <li class="done">CORS origins specific — no wildcard</li>
+      <li class="done">SEED_DEMO_USERS code default is "false"</li>
+      <li class="done">POSTGRES_PASSWORD required by docker-compose.yml (:? syntax)</li>
+      <li class="done">Alembic migrations: 3 revisions, linear chain, consistent with models</li>
+      <li class="done">entrypoint.sh: alembic + set -e + exit 1 on failure</li>
+      <li class="done">Docker Compose waits for PostgreSQL healthcheck</li>
+      <li class="done">PostgreSQL port not exposed to host</li>
+      <li class="done">File uploads: magic-byte validation, UUID filenames, 10 MB cap</li>
+      <li class="done">OTP comparison timing-safe (hmac.compare_digest)</li>
+      <li class="done">Username enumeration blocked on forgot-password</li>
+      <li class="done">All auth endpoints rate-limited</li>
+      <li class="done">Role authorisation reads from DB, not JWT claims</li>
+    </ul>
+  </div>
+
+  <footer>
+    Generated by IBM Bob 2.0 — Release Readiness &amp; Security Audit Assistant — ForensiX-ZR Hackathon Submission
+  </footer>
+
+</div>
+</body>
+</html>

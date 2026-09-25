@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Officers | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Officers</h1>
+            <p class="page-subtitle">
+              Manage authorized officers, duty status and assigned units.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <section class="grid grid-4">
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Total Officers</div>
+              <div class="stat-value">42</div>
+              <div class="stat-note">Registered staff</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-user-shield"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">On Duty</div>
+              <div class="stat-value">19</div>
+              <div class="stat-note">Currently active</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-circle"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Off Duty</div>
+              <div class="stat-value">23</div>
+              <div class="stat-note">Available later</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-moon"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div>
+              <div class="stat-label">Units</div>
+              <div class="stat-value">6</div>
+              <div class="stat-note">Operational teams</div>
+            </div>
+            <div class="stat-icon">
+              <i class="fa-solid fa-people-group"></i>
+            </div>
+          </div>
+        </section>
+        <div style="margin-top: 18px">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Officer Directory</h2>
+              <div class="toolbar">
+                <input
+                  class="search-box"
+                  data-filter-table="#mainTable"
+                  placeholder="Search records..."
+                /><select class="filter-select">
+                  <option>All Status</option>
+                  <option>On Duty</option>
+                  <option>Off Duty</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="mainTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Unit</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="officersTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

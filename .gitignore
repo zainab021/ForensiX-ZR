@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment secrets — NEVER commit
+# Root-level .env is read by Docker Compose for ${VARIABLE} substitution
+.env
+forensix_backend_python/.env
+
+# Database (local data)
+*.db
+*.sqlite3
+
+# Uploads (user files)
+forensix_backend_python/uploads/*
+!forensix_backend_python/uploads/.gitkeep
+
+# Package lock
+frontend/package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code local state
+.claude/
+
+# Generated audit reports (run scripts/release_check.py to regenerate)
+reports/*.md
+reports/*.json
+
+# Audit test database artifacts
+scripts/tests/*.db
+test_forensix.db

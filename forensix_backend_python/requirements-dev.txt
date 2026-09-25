@@ -1,0 +1,6 @@
+# Development / test-only dependencies.
+# These are NOT required at runtime and should NOT be installed in production images.
+# Install with: pip install -r requirements-dev.txt
+-r requirements.txt
+pytest>=8.0.0
+httpx>=0.27.0

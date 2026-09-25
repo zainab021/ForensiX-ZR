@@ -1,0 +1,58 @@
+version: '3.8'
+
+# SEC-01 Fix: PostgreSQL credentials are sourced from environment variables.
+# Copy the root-level .env.example to .env and fill in real values before running.
+# Docker Compose automatically reads the .env file in the same directory as this file.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: forensix_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-forensix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-forensix_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-forensix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build: ./forensix_backend_python
+    container_name: forensix_backend
+    # DEPLOY-05 NOTE: Port 8000 is exposed for local development convenience.
+    # In production, do NOT expose port 8000 directly to the internet.
+    # Place this container behind an HTTPS reverse proxy (nginx, Caddy, AWS ALB, etc.)
+    # and remove or restrict the ports mapping below.
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./forensix_backend_python/.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-forensix}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-forensix_db}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+    restart: unless-stopped
+
+
+  frontend:
+    image: nginx:alpine
+    container_name: forensix_frontend
+    ports:
+      - "5500:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  uploads_data:
+  postgres_data:

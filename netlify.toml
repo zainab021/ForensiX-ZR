@@ -1,0 +1,13 @@
+# Netlify deployment configuration for ForensiX-ZR frontend
+
+[build]
+  # The entire frontend folder is the publish directory — no build step needed.
+  publish = "frontend"
+  # No build command — plain HTML/JS/CSS, nothing to compile.
+  command = ""
+
+# Single-page navigation: redirect all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

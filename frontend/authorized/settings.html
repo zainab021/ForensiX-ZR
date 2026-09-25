@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | ForensiX ZR Unit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div>
+            <h2>ForensiX</h2>
+            <span>ZR Unit • Secure Crime Analysis</span>
+          </div>
+        </div>
+        <div class="nav-title">Authorized Modules</div>
+        <a class="nav-link" href="dashboard.html"
+          ><i class="fa-solid fa-chart-line"></i>Dashboard</a
+        ><a class="nav-link" href="reports.html"
+          ><i class="fa-solid fa-file-shield"></i>Reports</a
+        ><a class="nav-link" href="cases.html"
+          ><i class="fa-solid fa-folder-open"></i>Cases</a
+        ><a class="nav-link" href="add-case.html"
+          ><i class="fa-solid fa-plus-circle"></i>Add Case</a
+        ><a class="nav-link" href="case-details.html"
+          ><i class="fa-solid fa-diagram-project"></i>Case Details</a
+        ><a class="nav-link" href="analytics.html"
+          ><i class="fa-solid fa-chart-pie"></i>Analytics</a
+        ><a class="nav-link" href="evidence.html"
+          ><i class="fa-solid fa-box-archive"></i>Evidence</a
+        ><a class="nav-link" href="notifications.html"
+          ><i class="fa-solid fa-bell"></i>Notifications</a
+        ><a class="nav-link" href="activity-log.html"
+          ><i class="fa-solid fa-clock-rotate-left"></i>Activity Log</a
+        ><a class="nav-link" href="officers.html"
+          ><i class="fa-solid fa-user-shield"></i>Officers</a
+        ><a class="nav-link" href="users.html"
+          ><i class="fa-solid fa-users"></i>Users</a
+        ><a class="nav-link" href="role-management.html"
+          ><i class="fa-solid fa-key"></i>Role Management</a
+        ><a class="nav-link" href="settings.html"
+          ><i class="fa-solid fa-gear"></i>Settings</a
+        ><a class="nav-link" href="profile.html"
+          ><i class="fa-solid fa-user"></i>Profile</a
+        ><a class="nav-link" href="../index.html"
+          ><i class="fa-solid fa-right-from-bracket"></i>Logout</a
+        >
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-soft mobile-menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-kicker">authorized interface</div>
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">
+              Configure security, notification and system preferences.
+            </p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-magnifying-glass"></i></button
+            ><button class="btn btn-soft">
+              <i class="fa-solid fa-bell"></i>
+            </button>
+            <div class="avatar">ZR</div>
+          </div>
+        </div>
+        <!-- Profile Settings (live from API) -->
+        <section class="card" style="margin-bottom:24px;">
+          <div class="section-head">
+            <h2 class="section-title">Account Settings</h2>
+            <button class="btn btn-sm btn-soft" onclick="openEditProfile(window._settingsUserName||'', window._settingsUserEmail||'')">Edit Profile</button>
+          </div>
+          <div class="list" id="settingsProfileInfo">
+            <div class="list-item"><div class="item-title">Loading...</div></div>
+          </div>
+        </section>
+
+        <section class="grid grid-2">
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">Security Settings</h2>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Password</div>
+                  <div class="item-meta">Change your login password</div>
+                </div>
+                <button class="btn btn-sm btn-soft" onclick="openEditProfile(window._settingsUserName||'', window._settingsUserEmail||'')">Change</button>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Session duration</div>
+                  <div class="item-meta">Token valid for 24 hours</div>
+                </div>
+                <span class="badge info">24 hrs</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Audit logging</div>
+                  <div class="item-meta">All sensitive actions are tracked</div>
+                </div>
+                <span class="badge closed">Active</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Rate limiting</div>
+                  <div class="item-meta">Login limited to 10 attempts/min</div>
+                </div>
+                <span class="badge closed">Active</span>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="section-head">
+              <h2 class="section-title">System Status</h2>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Backend API</div>
+                  <div class="item-meta" id="settingsApiStatus">Checking...</div>
+                </div>
+                <span class="badge closed" id="settingsApiBadge">Online</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">File uploads</div>
+                  <div class="item-meta">Max 10 MB — jpg, png, pdf</div>
+                </div>
+                <span class="badge closed">Active</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">Role-based access</div>
+                  <div class="item-meta">Admin / Officer / Citizen</div>
+                </div>
+                <span class="badge closed">Active</span>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div class="item-title">XSS protection</div>
+                  <div class="item-meta">All outputs sanitized</div>
+                </div>
+                <span class="badge closed">Active</span>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+name: CI — ForensiX ZR Backend
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: Backend Tests & Dependency Audit
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: forensix_backend_python
+
+    env:
+      # Provide the required environment variables that the application needs
+      # at import time (SECRET_KEY, VALID_OFFICER_CODES, etc.).
+      SECRET_KEY: "ci-test-secret-key-not-for-production-use-only"
+      DATABASE_URL: "sqlite:///./test_forensix.db"
+      VALID_OFFICER_CODES: "ZR-ADMIN-001,ZR-OFC-101,ZR-OFC-102"
+      CORS_ORIGINS: "http://127.0.0.1:5500"
+      ALLOWED_HOSTS: "*"
+      SEED_DEMO_USERS: "false"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install production dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Install test dependencies
+        run: pip install --no-cache-dir pytest httpx
+
+      - name: Run pytest
+        # Fail the build if any test fails.
+        run: python -m pytest --tb=short -q
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Run pip-audit on production requirements
+        # Fail the build when dependency vulnerabilities are found.
+        # Only auditing requirements.txt (production) — not requirements-dev.txt.
+        run: python -m pip_audit -r requirements.txt
