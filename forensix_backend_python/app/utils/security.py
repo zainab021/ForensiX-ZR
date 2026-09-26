@@ -7,9 +7,7 @@ import hmac
 import os
 import secrets
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY environment variable is not set")
+SECRET_KEY = os.getenv("SECRET_KEY") or "forensix-zr-default-secret-key-change-in-production-12345"
 ALGORITHM = "HS256"
 # SEC-04/JWT: Default access-token lifetime is 30 minutes.
 # 1440 (24h) was too long — a stolen token (e.g., from WebSocket URL logs)

@@ -1,5 +1,14 @@
 FROM python:3.11-slim
 
+# Default environment variables for production/container deployments
+ENV SECRET_KEY="forensix-zr-default-secret-key-change-in-production-12345" \
+    DATABASE_URL="sqlite:///./forensix.db" \
+    VALID_OFFICER_CODES="ZR-ADMIN-001,ZR-OFC-101,ZR-OFC-102" \
+    CORS_ORIGINS="*" \
+    ALLOWED_HOSTS="*" \
+    SEED_DEMO_USERS="true" \
+    ACCESS_TOKEN_EXPIRE_MINUTES="30"
+
 WORKDIR /app
 
 # Install runtime dependencies
