@@ -19,7 +19,7 @@
 
   // ⬇️  CHANGE THIS to your deployed backend URL when hosting on Netlify/Render.
   // Leave as null to use automatic detection.
-  var PRODUCTION_BACKEND_URL = null;
+  var PRODUCTION_BACKEND_URL = "https://forensix-kypq.onrender.com";
   // Example: var PRODUCTION_BACKEND_URL = "https://forensix-backend.onrender.com";
 
   var hostname = window.location.hostname;
